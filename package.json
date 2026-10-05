@@ -1,0 +1,10 @@
+{
+  "name": "kalakriti-gallery",
+  "version": "2.0.0",
+  "description": "Kalakriti Gallery with a shared backend: accounts and artworks are visible from every device.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED",
+  "private": true
+}

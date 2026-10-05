@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My art | Kalakriti Gallery</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/market.css">
+</head>
+
+<body data-page="dashboard">
+<a class="skip" href="#manageGrid">Skip to your artworks</a>
+
+<header class="nav">
+  <a class="brand" href="index.html" id="brandName">Kalakriti</a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu"><span></span></button>
+  <nav class="nav-links" id="navLinks" aria-label="Main">
+    <a href="index.html#gallery">Collection</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#exhibitions">Exhibitions</a>
+    <a href="index.html#contact">Contact</a>
+    <div class="auth-links" id="authLinks"></div>
+  </nav>
+</header>
+
+<main class="dash" id="top">
+  <div class="dash-head">
+    <div>
+      <h1>My art</h1>
+      <p class="muted" id="workCount">Loading artworks…</p>
+    </div>
+    <div class="dash-actions">
+      <button class="btn primary" id="addBtn" type="button">Add artwork</button>
+      <a class="btn" href="index.html#gallery">View the gallery</a>
+    </div>
+  </div>
+
+  <p class="notice warn" id="storageWarn" role="alert" hidden>Cannot reach the gallery server, so changes cannot be saved. Make sure the server is running (node server.js), then reload.</p>
+  <p class="notice">These are the artworks you uploaded. Sell each one at a <strong>fixed price</strong> or as an <strong>auction</strong>. Visitors can buy, bid and review them on the home page.</p>
+
+  <ul class="m-grid" id="manageGrid"></ul>
+
+  <section class="orders" aria-labelledby="salesTitle">
+    <h2 id="salesTitle">My sales</h2>
+    <div id="salesList"></div>
+    <h2 id="buysTitle">My purchases and bids</h2>
+    <div id="buysList"></div>
+  </section>
+</main>
+
+<!-- ===================== ADD / EDIT DIALOG ===================== -->
+<dialog class="editor" id="editDialog" aria-labelledby="dialogTitle">
+  <form class="editor-form" id="editForm" novalidate>
+    <h2 id="dialogTitle">Add artwork</h2>
+
+    <div class="editor-grid">
+      <div class="editor-media">
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <img id="previewImg" alt="Preview of the artwork" hidden>
+          <span class="dz-text" id="dzText"><strong>Choose an image</strong> or drop it here<br>JPG, PNG or WebP</span>
+        </label>
+        <input class="sr-only" type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+        <button class="btn small" type="button" id="removeImageBtn" hidden>Use sample art instead</button>
+      </div>
+
+      <div class="editor-fields">
+        <div class="field wide">
+          <label for="fTitle">Title</label>
+          <input type="text" id="fTitle" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label for="fArtist">Artist</label>
+          <input type="text" id="fArtist" autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label for="fYear">Year</label>
+          <input type="number" id="fYear" min="1000" max="2100" step="1" required>
+        </div>
+        <div class="field">
+          <label for="fCategory">Category</label>
+          <input type="text" id="fCategory" list="catList" autocomplete="off" required>
+          <datalist id="catList"></datalist>
+        </div>
+        <div class="field">
+          <label for="fMedium">Medium</label>
+          <input type="text" id="fMedium" placeholder="Oil on canvas" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fDims">Dimensions</label>
+          <input type="text" id="fDims" placeholder="80 × 100 cm" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fSaleType">How do you want to sell it?</label>
+          <select id="fSaleType"><option value="fixed">Fixed price</option><option value="auction">Auction</option></select>
+          <span class="hint" id="lockHint" hidden>Locked because bidding has started.</span>
+        </div>
+        <div class="field" id="startBidBox" hidden>
+          <label for="fStartBid">Starting bid (INR)</label>
+          <input type="number" id="fStartBid" min="1" step="1">
+        </div>
+        <div class="field" id="endsBox" hidden>
+          <label for="fEnds">Auction ends</label>
+          <input type="datetime-local" id="fEnds">
+        </div>
+        <div class="field" id="priceBox">
+          <label for="fPrice">Price (INR)</label>
+          <input type="number" id="fPrice" min="0" step="1" aria-describedby="priceHint">
+          <span class="hint" id="priceHint">Leave empty to show "Price on request".</span>
+        </div>
+        <div class="field wide">
+          <label for="fDesc">Description</label>
+          <textarea id="fDesc"></textarea>
+        </div>
+        <div class="field wide">
+          <label for="fAlt">Image description for screen readers</label>
+          <input type="text" id="fAlt" autocomplete="off" aria-describedby="altHint">
+          <span class="hint" id="altHint">Say what the picture shows, in one sentence. Optional.</span>
+        </div>
+        <div class="wide editor-checks">
+          <div class="check"><input type="checkbox" id="fSold"><label for="fSold">Mark as sold</label></div>
+          <div class="check"><input type="checkbox" id="fFeatured"><label for="fFeatured">Show large on the home page</label></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="error" id="formError" role="alert"></p>
+    <div class="editor-foot">
+      <button class="btn" type="button" id="cancelBtn">Cancel</button>
+      <button class="btn primary" type="submit" id="saveBtn">Save artwork</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Used by the "Replace image" buttons on the cards -->
+<input type="file" id="replaceInput" accept="image/jpeg,image/png,image/webp" hidden>
+
+<div class="sr-only" id="announcer" aria-live="polite"></div>
+<noscript><p style="padding:24px">This page needs JavaScript to work.</p></noscript>
+
+<script src="js/config.js"></script>
+<script src="js/artworks-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/market.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

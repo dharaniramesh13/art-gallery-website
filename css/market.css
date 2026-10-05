@@ -1,0 +1,46 @@
+/* market.css: buy, bid and review panels (home page viewer) and sales lists (My art page). */
+
+.v-market, .v-reviews { margin-top: 12px; }
+.m-box { border: 1px solid var(--line); background: var(--surface); padding: 16px; display: grid; gap: 10px; }
+.m-box p { margin: 0; }
+.m-row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.m-label { display: block; font-size: .8rem; color: var(--muted); }
+.m-big { font-family: var(--serif); font-weight: 400; font-size: 1.9rem; line-height: 1.1; }
+.m-form { display: grid; gap: 6px; }
+.m-form[hidden] { display: none; }
+.m-form label { font-size: .85rem; color: var(--muted); margin-top: 6px; }
+.m-form input, .m-form select, .m-form textarea {
+  width: 100%; padding: .6rem .7rem; font: inherit; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--line); border-radius: 2px;
+}
+.m-form input:focus-visible, .m-form select:focus-visible, .m-form textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.m-form .btn { justify-self: start; margin-top: 8px; }
+.bid-row { display: flex; gap: 8px; }
+.bid-row input { flex: 1; min-width: 0; }
+.m-msg { color: #b3261e; font-size: .88rem; min-height: 1.2em; }
+.m-ok { margin: 0 0 8px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--surface); }
+@media (prefers-color-scheme: dark) { .m-msg { color: #ff9b94; } }
+
+.bid-list, .rev-list { list-style: none; margin: 0; padding: 0; font-size: .9rem; }
+.bid-list li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line); }
+
+.v-reviews h3 { font-family: var(--serif); font-weight: 400; font-size: 1.5rem; margin: 20px 0 4px; }
+.rev-sum { margin: 0 0 8px; }
+.stars { color: var(--accent); letter-spacing: 1px; }
+.review { padding: 10px 0; border-top: 1px solid var(--line); }
+.review p { margin: 4px 0; }
+.verified { font-size: .75rem; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 0 8px; }
+
+.tag-auction { position: absolute; left: 10px; top: 10px; background: var(--accent); color: var(--accent-ink); font-size: .78rem; padding: 2px 10px; border-radius: 999px; }
+.card-rating { color: var(--accent); }
+
+/* My art page */
+.orders { margin-top: 56px; display: grid; gap: 12px; }
+.orders h2 { font-family: var(--serif); font-weight: 400; font-size: 1.8rem; margin: 24px 0 0; }
+.o-list { list-style: none; margin: 0; padding: 0; }
+.o-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 24px; padding: 14px 0; border-top: 1px solid var(--line); }
+.o-item:last-child { border-bottom: 1px solid var(--line); }
+.o-item p { margin: 0; color: var(--muted); font-size: .9rem; }
+.o-item strong { font-weight: 600; }
+.o-amount { font-family: var(--serif); font-size: 1.4rem; }
+.m-extra { color: var(--muted); font-size: .85rem; margin: 2px 0 0; }

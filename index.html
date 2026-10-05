@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalakriti Gallery | Contemporary Art from India</title>
+<meta name="description" content="Contemporary painting, photography and digital art by a curated group of Indian artists. Browse the collection and inquire about works.">
+<meta name="color-scheme" content="light dark">
+
+<!-- Google Fonts is the only external resource. If it fails to load, Georgia and system fonts are used. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/gallery.css">
+<link rel="stylesheet" href="css/market.css">
+</head>
+
+<body data-page="home">
+<a class="skip" href="#gallery">Skip to the collection</a>
+
+<!-- ===================== NAVIGATION ===================== -->
+<header class="nav">
+  <a class="brand" href="#top" id="brandName">Kalakriti</a>
+
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu"><span></span></button>
+
+  <nav class="nav-links" id="navLinks" aria-label="Main">
+    <a href="#gallery">Collection</a>
+    <a href="#about">About</a>
+    <a href="#exhibitions">Exhibitions</a>
+    <a href="#contact">Contact</a>
+    <button class="saved-btn" id="savedBtn" type="button" aria-label="Show saved works">Saved (<span id="savedCount">0</span>)</button>
+    <!-- Filled by js/nav.js: Log in + Sign up, or the user's name + My art + Log out -->
+    <div class="auth-links" id="authLinks"></div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ===================== 1. HERO ===================== -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div>
+      <h1 id="heroTitle">Kalakriti</h1>
+      <p class="tagline" id="tagline"></p>
+      <a class="btn" href="#gallery">View the collection</a>
+    </div>
+    <figure class="hero-work" id="heroWork"></figure>
+  </section>
+
+  <!-- ===================== 2. GALLERY GRID ===================== -->
+  <section class="section" id="gallery" aria-labelledby="galleryTitle">
+    <div class="section-head">
+      <h2 id="galleryTitle">The collection</h2>
+      <p class="result-count" id="resultCount" aria-live="polite"></p>
+    </div>
+
+    <div class="filters">
+      <div class="pill-row" id="categoryPills" role="group" aria-label="Filter by category"></div>
+      <div class="select-row">
+        <label>Medium <select id="mediumSelect"></select></label>
+        <label>Year <select id="yearSelect"></select></label>
+        <label>Sort by
+          <select id="sortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="priceLow">Price, low to high</option>
+            <option value="priceHigh">Price, high to low</option>
+            <option value="title">Title, A to Z</option>
+          </select>
+        </label>
+        <button class="pill" id="savedOnly" type="button" aria-pressed="false">Saved works only</button>
+      </div>
+    </div>
+
+    <ul class="grid" id="grid"></ul>
+    <p class="empty" id="empty" hidden>No works match these filters. <button class="pill" id="resetFilters" type="button">Clear filters</button></p>
+  </section>
+
+  <!-- ===================== 4. ABOUT ===================== -->
+  <section class="section about" id="about" aria-labelledby="aboutTitle">
+    <figure class="portrait">
+      <img id="portraitImg" alt="Portrait placeholder of the gallery's founder and curator, Nandini Varma" width="800" height="1000">
+      <figcaption>Nandini Varma, founder and curator</figcaption>
+    </figure>
+    <div>
+      <h2 id="aboutTitle">A small gallery with a long view</h2>
+      <p>Kalakriti began in 2025 as a single room in Vijayawada and a simple idea: that good contemporary work should be easy to see, easy to understand and easy to live with.</p>
+      <p>We represent a small group of artists working in painting, photography and digital media. Each work is shown at a generous size with the story behind it, and every sale includes a signed certificate of authenticity and insured delivery.</p>
+      <p>Collectors are welcome to ask questions, request more images, or arrange a private viewing. We would rather you take your time.</p>
+      <blockquote>A picture should be allowed to be quiet.</blockquote>
+    </div>
+  </section>
+
+  <!-- ===================== 5. EXHIBITIONS ===================== -->
+  <section class="section" id="exhibitions" aria-labelledby="exTitle">
+    <div class="section-head"><h2 id="exTitle">Exhibitions</h2></div>
+    <div id="exhibitionList"></div>
+  </section>
+
+  <!-- ===================== 6. CONTACT / INQUIRY ===================== -->
+  <section class="section contact" id="contact" aria-labelledby="contactTitle" style="background:var(--surface)">
+    <div>
+      <h2 id="contactTitle">Inquire about a work</h2>
+      <p>Tell us which piece interests you and we will reply within two working days with availability, condition details and shipping.</p>
+      <address>
+        Kalakriti Gallery<br>
+        Vijayawada, Andhra Pradesh<br>
+        <a href="#" id="emailLink">hello@kalakriti.example</a><br>
+        Tuesday to Saturday, 11 am to 6 pm
+      </address>
+    </div>
+
+    <div>
+      <form id="contactForm" novalidate>
+        <div class="field">
+          <label for="cName">Your name</label>
+          <input type="text" id="cName" name="name" autocomplete="name" required aria-describedby="cNameErr">
+          <span class="error" id="cNameErr" role="alert"></span>
+        </div>
+        <div class="field">
+          <label for="cEmail">Email address</label>
+          <input type="email" id="cEmail" name="email" autocomplete="email" required aria-describedby="cEmailErr">
+          <span class="error" id="cEmailErr" role="alert"></span>
+        </div>
+        <div class="field">
+          <label for="cWork">Artwork of interest</label>
+          <select id="cWork" name="work"></select>
+        </div>
+        <div class="field">
+          <label for="cMessage">Message</label>
+          <textarea id="cMessage" name="message" required aria-describedby="cMessageErr"></textarea>
+          <span class="error" id="cMessageErr" role="alert"></span>
+        </div>
+        <div><button class="btn primary" type="submit">Send inquiry</button></div>
+      </form>
+      <div class="form-note" id="formNote" role="status" hidden></div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== 7. FOOTER ===================== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h3 id="footerName">Kalakriti</h3>
+      <p class="muted">Contemporary art from independent Indian artists, shown the way it deserves to be seen.</p>
+    </div>
+    <div>
+      <h3>Follow</h3>
+      <ul>
+        <li><a href="#" rel="noopener">Instagram</a></li>
+        <li><a href="#" rel="noopener">Facebook</a></li>
+        <li><a href="#" rel="noopener">Pinterest</a></li>
+        <li><a href="#" rel="noopener">YouTube</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>New work, once a month</h3>
+      <form class="news-form" id="newsForm" novalidate>
+        <label class="sr-only" for="newsEmail">Email address</label>
+        <input type="email" id="newsEmail" placeholder="Your email address" autocomplete="email" aria-describedby="newsMsg">
+        <button class="btn small" type="submit">Subscribe</button>
+      </form>
+      <p class="error" id="newsMsg" role="status" style="margin-top:8px"></p>
+    </div>
+  </div>
+  <p class="copyright">&copy; <span id="year"></span> <span id="copyName">Kalakriti Gallery</span>. All artworks are the property of their artists.</p>
+</footer>
+
+<!-- ===================== 3. ARTWORK VIEWER ===================== -->
+<dialog class="viewer" id="viewer" aria-labelledby="vTitle">
+  <div class="viewer-inner">
+    <div class="v-media">
+      <div class="zoom-wrap" id="zoomWrap">
+        <img id="vImg" alt="">
+      </div>
+      <button class="v-arrow prev" id="vPrev" type="button" aria-label="Previous artwork">&#8249;</button>
+      <button class="v-arrow next" id="vNext" type="button" aria-label="Next artwork">&#8250;</button>
+      <button class="zoom-btn" id="zoomBtn" type="button">Zoom in</button>
+    </div>
+
+    <div class="v-info">
+      <button class="v-close" id="vClose" type="button">Close</button>
+      <h2 id="vTitle"></h2>
+      <p class="v-artist" id="vArtist"></p>
+      <dl class="v-facts" id="vFacts"></dl>
+      <p id="vDesc"></p>
+      <div class="v-price" id="vPrice"></div>
+      <div class="v-market" id="vMarket"></div>
+      <div class="v-actions">
+        <button class="btn primary" id="vInquire" type="button">Inquire about this work</button>
+        <a class="btn" id="vEdit" href="dashboard.html" hidden>Replace this image</a>
+        <button class="heart" id="vHeart" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6.1 5c2 0 3.4 1.1 3.9 2.2h4c.5-1.1 1.9-2.200 3.900-2.200 3.400 0 5.200 3.400 3.700 6.800C19.500 16.400 12 21 12 21z" transform="translate(0 0)"/></svg>
+          <span id="vHeartText">Save</span>
+        </button>
+      </div>
+      <section class="v-reviews" id="vReviews" aria-label="Reviews"></section>
+      <div class="v-nav-row">
+        <span id="vCount"></span>
+      </div>
+      <p class="v-hint">Use the left and right arrow keys to browse. Press Esc to close.</p>
+    </div>
+  </div>
+</dialog>
+
+<!-- Announces changes (saved, filters) to screen readers -->
+<div class="sr-only" id="announcer" aria-live="polite"></div>
+
+<noscript><p style="padding:24px">This gallery needs JavaScript to display the artworks.</p></noscript>
+
+<script src="js/config.js"></script>
+<script src="js/artworks-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/placeholder-art.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/market.js"></script>
+<script src="js/market-ui.js"></script>
+<script src="js/gallery.js"></script>
+</body>
+</html>

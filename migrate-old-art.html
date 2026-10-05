@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Move my old artworks to the server</title>
+<style>
+  body{font:16px/1.5 system-ui,sans-serif;max-width:620px;margin:40px auto;padding:0 20px;color:#222}
+  label{display:block;margin-top:14px;font-weight:600}
+  input{width:100%;padding:10px;font:inherit;border:1px solid #bbb;border-radius:6px;box-sizing:border-box}
+  small{color:#666;font-weight:400}
+  button{margin-top:20px;padding:12px 22px;font:inherit;font-weight:600;border:0;border-radius:6px;background:#222;color:#fff;cursor:pointer}
+  button:disabled{opacity:.5}
+  #log{margin-top:20px;padding:14px;background:#f4f4f4;border-radius:6px;white-space:pre-wrap;font-size:14px;min-height:20px}
+  .bad{color:#b00020}.good{color:#0a6b2d}
+  ol li{margin:6px 0}
+</style>
+</head>
+<body>
+<h1>Move my old artworks to the server</h1>
+<p>Your first artworks were saved <strong>inside the browser</strong> where you uploaded them, so other laptops could not see them.
+This page copies them to the shared server. Do this once.</p>
+<ol>
+  <li>Open this page in <strong>the same browser, on the same laptop, opened the same way</strong> as the old gallery
+      (for example, double-click this file if you used to double-click <code>index.html</code>).</li>
+  <li>Make sure the server is running (<code>node server.js</code>).</li>
+  <li>Fill in the form below and press the button.</li>
+</ol>
+
+<label for="server">Server address <small>(where you run node server.js)</small></label>
+<input id="server" value="http://localhost:3000">
+<label for="email">Email of your old account</label>
+<input id="email" type="email" autocomplete="email">
+<label for="pw">Password <small>(for your account on the server)</small></label>
+<input id="pw" type="password" autocomplete="current-password">
+<label for="name">Your name <small>(only if you have not signed up on the server yet)</small></label>
+<input id="name" autocomplete="name">
+<button id="go">Copy my artworks to the server</button>
+<div id="log" role="status"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const log = (msg, cls) => { const d = $("#log"); d.innerHTML += (cls ? `<span class="${cls}">` : "") + msg.replace(/</g, "&lt;") + (cls ? "</span>" : "") + "\n"; };
+
+async function api(base, method, path, body, token) {
+  let res;
+  try {
+    res = await fetch(base + "/api" + path, { method, headers: { ...(body ? { "Content-Type": "application/json" } : {}), ...(token ? { Authorization: "Bearer " + token } : {}) }, body: body ? JSON.stringify(body) : undefined });
+  } catch { throw Object.assign(new Error("NETWORK"), { code: "NETWORK" }); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error || "ERROR"), { code: data.error || "ERROR" });
+  return data;
+}
+
+function readOldArtworks() {
+  return new Promise(resolve => {
+    if (!window.indexedDB) return resolve([]);
+    const req = indexedDB.open("kalakriti");
+    req.onerror = () => resolve([]);
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains("artworks")) { db.close(); return resolve([]); }
+      const get = db.transaction("artworks").objectStore("artworks").getAll();
+      get.onsuccess = () => { db.close(); resolve(get.result || []); };
+      get.onerror = () => { db.close(); resolve([]); };
+    };
+  });
+}
+
+$("#go").onclick = async () => {
+  const btn = $("#go"); btn.disabled = true; $("#log").innerHTML = "";
+  try {
+    const base = $("#server").value.trim().replace(/\/+$/, "");
+    const email = $("#email").value.trim().toLowerCase(), password = $("#pw").value, name = $("#name").value.trim();
+    if (!email || !password) throw new Error("Enter your email and password.");
+
+    // 1. Find the old account and its artworks in THIS browser
+    let users = []; try { users = JSON.parse(localStorage.getItem("kg_users") || "[]"); } catch {}
+    const old = users.find(u => u.email === email);
+    if (!old) {
+      log("No old account with that email was found in this browser.", "bad");
+      log(users.length ? "Old accounts found here: " + users.map(u => u.email).join(", ") : "No old accounts at all were found. Open this page in the browser and the same way you used the old gallery.");
+      return;
+    }
+    const works = (await readOldArtworks()).filter(a => a.ownerId === old.id);
+    log(`Found ${works.length} artwork(s) for ${email} in this browser.`);
+    if (!works.length) return;
+
+    // 2. Log in to the server (or create the account)
+    let session;
+    try { session = await api(base, "POST", "/login", { email, password }); log("Logged in to the server."); }
+    catch (e) {
+      if (e.code !== "BAD_LOGIN") throw e;
+      if (!name) throw new Error("That email and password are not on the server yet. Type your name in the box above to create the account, or fix the password.");
+      session = await api(base, "POST", "/register", { name, email, password }); log("Created your account on the server.");
+    }
+    const token = session.token;
+
+    // 3. Upload, skipping anything already there (so running twice is safe)
+    const have = (await api(base, "GET", "/bootstrap", undefined, token)).artworks.filter(a => a.ownerId === session.user.id);
+    let done = 0, skipped = 0;
+    for (const w of works) {
+      if (have.some(h => h.title === w.title && h.year === w.year && h.artist === w.artist)) { skipped++; continue; }
+      const { id, ownerId, ownerName, soldTo, soldFor, ...rest } = w;
+      if (rest.saleType === "auction" && (!rest.endsAt || rest.endsAt < Date.now() + 120000)) { rest.saleType = "fixed"; rest.price = null; rest.startBid = null; rest.endsAt = null; }
+      log(`Uploading "${w.title}"…`);
+      await api(base, "POST", "/artworks", rest, token);
+      done++;
+    }
+    log(`\nDone. ${done} uploaded, ${skipped} already on the server.`, "good");
+    log("Now open the server address in any browser and log in: your artworks will be there.");
+  } catch (e) {
+    log(e.code === "NETWORK" ? "Cannot reach the server. Check the address and that node server.js is running." : (e.code === "TOO_MANY" ? "Too many attempts. Wait a few minutes." : e.message), "bad");
+  } finally { btn.disabled = false; }
+};
+</script>
+</body>
+</html>

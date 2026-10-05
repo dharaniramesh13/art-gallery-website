@@ -1,0 +1,49 @@
+/* dashboard.css: dashboard.html ("My art"): add, edit, replace and delete artworks */
+
+.dash { padding: clamp(32px, 5vw, 64px) var(--pad) clamp(64px, 8vw, 112px); }
+.dash-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 24px; }
+.dash-head h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
+.dash-head p { margin: 6px 0 0; }
+.dash-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.notice { margin: 0 0 12px; max-width: none; padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); font-size: .95rem; }
+.notice.warn { border-left-color: #b3261e; }
+
+.m-grid { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: var(--gap); }
+.m-card { background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.m-img { position: relative; aspect-ratio: 4 / 5; background: var(--line); overflow: hidden; }
+.m-img img { width: 100%; height: 100%; object-fit: cover; }
+.badges { position: absolute; left: 10px; top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { background: var(--paper); color: var(--ink); font-size: .78rem; padding: 2px 10px; border-radius: 999px; }
+.badge.sample { background: var(--accent); color: var(--accent-ink); }
+.m-body { padding: 16px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.m-body h3 { font-size: 1.45rem; }
+.m-body p { margin: 0; font-size: .92rem; color: var(--muted); }
+.m-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 14px; }
+
+/* Add / edit dialog */
+dialog.editor { width: min(900px, calc(100% - 24px)); max-height: 94svh; padding: 0; border: 1px solid var(--line); background: var(--paper); color: var(--ink); overflow: auto; }
+dialog.editor::backdrop { background: rgba(0, 0, 0, .55); }
+.editor-form { padding: clamp(20px, 3vw, 36px); display: grid; gap: 20px; }
+.editor-form h2 { font-size: clamp(1.9rem, 3vw, 2.4rem); }
+.editor-grid { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(20px, 3vw, 36px); align-items: start; }
+.editor-media { display: grid; gap: 12px; }
+
+.dropzone { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; background: var(--surface); border: 2px dashed var(--line); cursor: pointer; overflow: hidden; text-align: center; transition: border-color .2s; }
+.dropzone:hover, .dropzone.over, .dropzone:focus-within { border-color: var(--accent); }
+.dropzone img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.dz-text { position: relative; z-index: 1; padding: 10px 12px; font-size: .9rem; color: var(--muted); }
+.dropzone.has-image .dz-text { align-self: end; width: 100%; background: color-mix(in srgb, var(--paper) 88%, transparent); color: var(--ink); }
+
+.editor-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.editor-fields .wide { grid-column: 1 / -1; }
+.editor-fields .field { min-width: 0; }
+.editor-fields textarea { min-height: 96px; }
+.editor-checks { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.editor-foot { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  .editor-grid { grid-template-columns: 1fr; }
+  .dropzone { aspect-ratio: 4 / 3; max-width: 420px; }
+  .editor-fields { grid-template-columns: 1fr; }
+}
